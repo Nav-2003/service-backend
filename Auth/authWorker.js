@@ -14,7 +14,7 @@ router.put('/signUp',async(req,res)=>{
    const hashPass=await bcrypt.hash(pass,10);
   await userServiceModel.create({
     name:name,phone:phone,email:email,adhar:adhar,pass:hashPass,
-    service:service,lat:lat,lng:lng
+    service:service,lat:lat,lng:lng,type:"worker"
   }).then(()=>{
     res.json({signUp:true})
   }).catch(()=>{

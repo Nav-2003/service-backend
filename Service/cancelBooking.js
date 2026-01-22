@@ -1,36 +1,22 @@
 import express from "express";
-import { customerDataModel, userServiceModel } from "../DB_Wroker/dbservice.js";
+import { bookingDataModel, customerDataModel, userServiceModel } from "../DB_Wroker/dbservice.js";
+import socketEmail from "../socketStore.js";
+import { io } from "../index.js";
 
 const router=express.Router();
 
-router.put('/cancelCustomer',async(req,res)=>{
-  const {email}=req.body;
-  const data=await customerDataModel.findOne({email:email});
-  const workerEmail=data.workerEmail;
-  await customerDataModel.findOneAndUpdate(
-    {email:email},
-    {$set:{workerEmail:null}}
-  );
-  await userServiceModel.findOneAndUpdate(
-    {email:workerEmail},
-    {$set:{customerEmail:null,cancel:true}}
-  )
-  res.json({cancel:true})
+router.put('/cancelBooking', async (req, res) => {
+  const {bookingId}=req.body;
+  const bookingDetail=await bookingDataModel.findById(bookingId);
+  const workerEmail=bookingDetail.workerEmail;
+  const custmorEmail=bookingDetail.customerEmail;
+  const socket1=socketEmail.get(workerEmail);
+  const socket2=socketEmail.get(custmorEmail);
+  await bookingDataModel.findByIdAndDelete(bookingId);
+  io.to(socket1).to(socket2).emit("cancelBooking",{cancel:true});
+  console.log(socket1,socket2);
+  return res.json({cancel:true});
 });
 
-router.put('/cancelWorker',async(req,res)=>{
-    const {email}=req.body;
-    const data=await userServiceModel.findOne({email:email});
-    const custmorEmail=data.customerEmail;
-     await customerDataModel.findOneAndUpdate(
-    {email:custmorEmail},
-    {$set:{workerEmail:null,cancel:true}}
-  );
-  await userServiceModel.findOneAndUpdate(
-    {email:email},
-    {$set:{customerEmail:null}}
-  )
-   res.json({cancel:true})
-});
 
 export default router;

@@ -14,7 +14,8 @@ const userService=new mongoose.Schema({
    active:{type:Boolean,default:false},
    customerEmail:{type:String,default:null},
    cancel:{type:Boolean,default:null},
-   type:{type:String,default:"worker"}
+   type:{type:String,default:"worker"},
+   workerSocket:{type:String}
 });
 
 const customerData=new mongoose.Schema({
@@ -22,14 +23,23 @@ const customerData=new mongoose.Schema({
    name:{type:String},
    pass:{type:String},
    phone:{type:String},
-   workerMood:{type:Boolean,default:null},
    lat:{type:Number},
    lng:{type:Number},
    workerEmail:{type:String,default:null},
    cancel:{type:Boolean,default:null},
-   type:{type:String,default:"customer"}
+   type:{type:String,default:"customer"},
+   customerSocket:{type:String}
+});
+
+const bookingDetail=new mongoose.Schema({
+   customerEmail:{type:String,default:null},
+   workerEmail:{type:String,default:null},
+   accept:{type:Boolean,default:null},
+   cancel:{type:Boolean,default:null}           
 });
 
 const userServiceModel=mongoose.model("userService",userService);
 const customerDataModel=mongoose.model("customerData",customerData);
-export {userServiceModel,customerDataModel};
+const bookingDataModel=mongoose.model("bookingDetail",bookingDetail);
+
+export {userServiceModel,customerDataModel,bookingDataModel};

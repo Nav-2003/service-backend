@@ -37,7 +37,7 @@ app.use('/api/service',cancelBooking);
 
 
 app.get('/',async (req,res)=>{
-    res.send("You are connected to the server")
+    res.send("welcome to my server baby......")
 });
 
 const server= http.createServer(app);
@@ -46,6 +46,8 @@ const io=new Server(server,{
 })
 
 emailSocket(io);
+
+export {io}
 
 server.listen(3000,()=>{
     console.log("backend is started successfully")

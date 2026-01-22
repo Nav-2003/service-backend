@@ -1,43 +1,20 @@
 import { customerDataModel, userServiceModel } from "../DB_Wroker/dbservice.js";
 import getDistanceKm from "../getDistance.js";
+import socketEmail from "../socketStore.js";
+
 
 const emailSocket = (io) => {
-  io.on("connection", (socket) => {
+  io.on("connection", (socket) => { 
+   
+    socket.on("register-Socket",({email})=>{
+        socketEmail.set(email,socket.id);
+        console.log(email,socket.id);
+    });
+    
     socket.on("checkEmail", async (msg) => {
       const email = msg.email;
-      console.log(email, socket.id);
       const result = await userServiceModel.findOne({ email });
-      console.log(result);
       socket.emit("emailResult", { exits: !!result });
-    });
-
-    socket.on("checkAssignCustomer", async (msg) => {
-      const email = msg.email;
-      if (!email) return;
-      const result = await userServiceModel.findOne({ email });
-      if (result.customerEmail) {
-        const email = result.customerEmail;
-        const data = await customerDataModel.findOne({ email });
-        const distance=getDistanceKm(result.lat,result.lng,data.lat,data.lng);
-        socket.emit("assignCustmorResult", {
-           distance:distance,
-           name: data.name,
-        });
-      }
-    });
-
-    socket.on("checkWorkerAssign", async (msg) => {
-      const email = msg.email;
-      if (!email) return;
-      const result = await customerDataModel.findOne({ email });
-      if (result.workerMood != null) {
-        const response = result.workerMood;
-        await customerDataModel.findOneAndUpdate(
-          { email: email },
-          { $set: { workerMood: null } }
-        );
-        socket.emit("checkWorkerAssignResult", { result: response });
-      }
     });
 
     socket.on("putLiveLocation", async ({ email, lat, lng }) => {
@@ -82,31 +59,6 @@ const emailSocket = (io) => {
       const lng2 = data2.lng;
       const distance = getDistanceKm(lat1, lng1, lat2, lng2);
       socket.emit("liveDistance", {distance});
-    });
-      
-    socket.on("cancelBooking",async({email})=>{
-       if(!email) return;
-       const response1=await userServiceModel.findOne({email:email});
-       const response2=await customerDataModel.findOne({email:email});
-       if(response1){
-            if(response1.cancel===true){
-                await userServiceModel.findOneAndUpdate(
-                  {email:email},
-                  {$set:{cancel:null}}
-                )
-               socket.emit("cancelBooking",{cancel:true});
-            }
-            socket.emit("cancelBooking",{cancel:false});
-       }else{
-            if(response2.cancel===true){
-                await customerDataModel.findOneAndUpdate(
-                  {email:email},
-                  {$set:{cancel:null}}
-                )
-                socket.emit("cancelBooking",{cancel:true})
-            }
-           socket.emit("cancelBooking",{cancel:false});   
-         }
     });
 
   });
