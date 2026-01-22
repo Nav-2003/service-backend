@@ -36,7 +36,7 @@ app.use('/api/email',assignWorker);
 app.use('/api/service',cancelBooking);
 
 
-app.get('/',async (req,res)=>{
+app.get('/api',async (req,res)=>{
     res.send("welcome to my server baby......")
 });
 
