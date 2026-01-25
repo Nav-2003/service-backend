@@ -24,7 +24,7 @@ const app=express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:"https://localservices.publicvm.com",
     credentials:true
 }));
 
@@ -36,13 +36,16 @@ app.use('/api/email',assignWorker);
 app.use('/api/service',cancelBooking);
 
 
-app.get('/',async (req,res)=>{
+app.get('/api',async (req,res)=>{
     res.send("welcome to my server baby......")
 });
 
 const server= http.createServer(app);
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 1d4f637ad725315f3c4811ffd869711264deb665
 const io = new Server(server, {
   path: "/socket.io",
   cors: {
@@ -50,7 +53,10 @@ const io = new Server(server, {
     methods: ["GET", "POST"]
   },
 });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1d4f637ad725315f3c4811ffd869711264deb665
 emailSocket(io);
 
 export {io}
