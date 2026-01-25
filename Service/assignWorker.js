@@ -43,6 +43,17 @@ router.put('/accept',async(req,res)=>{
      res.json({Accept:true});
 });
 
+router.put('/cancel',async(req,res)=>{
+     const {bookingId}=req.body;
+     if(!bookingId) return res.json({"cancel":false})
+     const data=await bookingDataModel.findById(bookingId);
+     const workerEmail=data.workerEmail;
+     const socketId=socketEmail.get(workerEmail);
+     io.to(socketId).emit("customerCancel",{});
+     await bookingDataModel.findByIdAndDelete(bookingId);
+     return res.json({"cancel":true})
+})
+
 router.put("/getEmail", async (req, res) => {
      const {email,bookingId}=req.body;
      const data=await bookingDataModel.findById(bookingId);

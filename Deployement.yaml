@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: frontend
+   namespace: frontend
+   labels:
+     app: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+       - name: frontend
+         image: naveen724/service-backend
+         imagePullPolicy: Always
+         ports:
+           - containerPort: 3000
+         resources:
+           request:
+             cpu: "100m"
+             memory: "128mi"
+           limits:
+             cpu: "500m"
+             memory: "256mi"
+           
