@@ -41,11 +41,6 @@ app.get('/api',async (req,res)=>{
 });
 
 const server= http.createServer(app);
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 1d4f637ad725315f3c4811ffd869711264deb665
 const io = new Server(server, {
   path: "/socket.io",
   cors: {
@@ -53,10 +48,6 @@ const io = new Server(server, {
     methods: ["GET", "POST"]
   },
 });
-<<<<<<< HEAD
-
-=======
->>>>>>> 1d4f637ad725315f3c4811ffd869711264deb665
 emailSocket(io);
 
 export {io}
