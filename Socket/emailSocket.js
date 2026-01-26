@@ -1,4 +1,4 @@
-import { customerDataModel, userServiceModel } from "../DB_Wroker/dbservice.js";
+import { bookingDataModel, customerDataModel, userServiceModel } from "../DB_Wroker/dbservice.js";
 import getDistanceKm from "../getDistance.js";
 import socketEmail from "../socketStore.js";
 
@@ -61,6 +61,14 @@ const emailSocket = (io) => {
       socket.emit("liveDistance", {distance});
     });
 
+    socket.on("chatMessage",async({email,sender,text})=>{
+         const socketId=socketEmail.get(email);
+      io.to(socketId).emit("chatMessage", {
+        sender:sender,
+        text: text,
+        time: new Date().toISOString(),
+      });
+    });
   });
 };
 
