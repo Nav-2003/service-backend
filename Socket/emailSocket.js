@@ -1,16 +1,18 @@
-import { bookingDataModel, customerDataModel, userServiceModel } from "../DB_Wroker/dbservice.js";
+import {
+  bookingDataModel,
+  customerDataModel,
+  userServiceModel,
+} from "../DB_Wroker/dbservice.js";
 import getDistanceKm from "../getDistance.js";
 import socketEmail from "../socketStore.js";
 
-
 const emailSocket = (io) => {
-  io.on("connection", (socket) => { 
-   
-    socket.on("register-Socket",({email})=>{
-        socketEmail.set(email,socket.id);
-        console.log(email,socket.id);
+  io.on("connection", (socket) => {
+    socket.on("register-Socket", ({ email }) => {
+      socketEmail.set(email, socket.id);
+      console.log(email, socket.id);
     });
-    
+
     socket.on("checkEmail", async (msg) => {
       const email = msg.email;
       const result = await userServiceModel.findOne({ email });
@@ -58,15 +60,37 @@ const emailSocket = (io) => {
       const lat2 = data2.lat;
       const lng2 = data2.lng;
       const distance = getDistanceKm(lat1, lng1, lat2, lng2);
-      socket.emit("liveDistance", {distance});
+      socket.emit("liveDistance", { distance });
     });
 
-    socket.on("chatMessage",async({email,sender,text})=>{
-         const socketId=socketEmail.get(email);
+    socket.on("chatMessage", async ({ email, sender, text }) => {
+      const socketId = socketEmail.get(email);
       io.to(socketId).emit("chatMessage", {
-        sender:sender,
+        sender: sender,
         text: text,
         time: new Date().toISOString(),
+      });
+    });
+
+    socket.on("paymentStatus", async ({ bookingId }) => {
+      const data = await bookingDataModel.findById(bookingId);
+      await bookingDataModel.findByIdAndUpdate(bookingId, {
+        $set: {
+          accept: false,
+          cancel: false,
+          completed: true,
+          time: Date.now(),
+        },
+      });
+      const customerEmail = data.customerEmail;
+      const workerEmail=data.workerEmail;
+      await userServiceModel.findOneAndUpdate(
+        {email:workerEmail},
+        {$set:{active:true}}
+      )
+      const socketId = socketEmail.get(customerEmail);
+      io.to(socketId).emit("paymentResponse", {
+        payment: "done",
       });
     });
   });

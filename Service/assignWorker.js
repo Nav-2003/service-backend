@@ -6,11 +6,12 @@ import socketEmail from "../socketStore.js";
 const router=express.Router();
 
 router.put('/assignWorker',async(req,res)=>{
-  const {custmorEmail,workerEmail}=req.body;
+  const {custmorEmail,workerEmail,service}=req.body;
   if(!custmorEmail||!workerEmail) return res.json({assign:false});
    const booking=await bookingDataModel.create({
      customerEmail:custmorEmail,
-     workerEmail
+     workerEmail,
+     service
   });
   const worker=await userServiceModel.findOne({email:workerEmail});
   const custmor=await customerDataModel.findOne({email:custmorEmail});
@@ -37,7 +38,15 @@ router.put('/accept',async(req,res)=>{
     const {email,bookingId}=req.body;
      if(!email) return res.json({reject:false})
     const data=await bookingDataModel.findById(bookingId);
-    const custmorEmail=data.customerEmail;
+    await bookingDataModel.findByIdAndUpdate(
+     bookingId,
+     {$set:{accept:true,cancel:false,completed:false,time:Date.now()}}
+    ); 
+    await userServiceModel.findOneAndUpdate(
+     {email:email},
+     {$set:{active:false}}
+    )
+     const custmorEmail=data.customerEmail;
      const socketId=socketEmail.get(custmorEmail);
      io.to(socketId).emit("checkWorkerAssignResult",{result:true});
      res.json({Accept:true});
@@ -48,6 +57,10 @@ router.put('/cancel',async(req,res)=>{
      if(!bookingId) return res.json({"cancel":false})
      const data=await bookingDataModel.findById(bookingId);
      const workerEmail=data.workerEmail;
+     await userServiceModel.findOneAndUpdate(
+     {email:workerEmail},
+     {$set:{active:true}}
+    )
      const socketId=socketEmail.get(workerEmail);
      io.to(socketId).emit("customerCancel",{});
      await bookingDataModel.findByIdAndDelete(bookingId);
