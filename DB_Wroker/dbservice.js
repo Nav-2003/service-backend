@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
 const userService=new mongoose.Schema({
    name:{type:String},
@@ -12,7 +11,7 @@ const userService=new mongoose.Schema({
    totalWork:{type:Number,default:0},
    lat:{type:Number},
    lng:{type:Number},
-   active:{type:Boolean,default:true},
+   active:{type:Boolean,default:false},
    customerEmail:{type:String,default:null},
    cancel:{type:Boolean,default:null},
    type:{type:String,default:"worker"},
@@ -43,7 +42,16 @@ const bookingDetail=new mongoose.Schema({
    payment:{type:Date,default:null},        
 });
 
+const feedbackData=new mongoose.Schema({
+      email:{type:String},
+      name:{type:String},
+      rating:{type:Number,default:3},
+      text:{type:String},
+      time:{type:Date}
+});
+
 const userServiceModel=mongoose.model("userService",userService);
 const customerDataModel=mongoose.model("customerData",customerData);
 const bookingDataModel=mongoose.model("bookingDetail",bookingDetail);
-export {userServiceModel,customerDataModel,bookingDataModel};
+const feedbackDataModel=mongoose.model("feedbackData",feedbackData);
+export {userServiceModel,customerDataModel,bookingDataModel,feedbackDataModel};

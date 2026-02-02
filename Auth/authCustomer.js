@@ -53,7 +53,7 @@ router.put('/signIn',async(req,res)=>{
    if(workerEmail){
        await userServiceModel.findOneAndUpdate(
          {email:email},
-         {$set:{customerEmail:null,cancel:null,lat:lat,lng:lng}}
+         {$set:{customerEmail:null,cancel:null,lat:lat,lng:lng,active:true}}
        )
         const hashPass=workerEmail.pass;
            if(bcrypt.compare(pass,hashPass)){

@@ -21,7 +21,7 @@ router.put('/cancelBooking', async (req, res) => {
      {$set:{accept:false,cancel:true,completed:false,time:Date.now()}}
     );
   io.to(socket1).to(socket2).emit("cancelBooking",{cancel:true});
-  console.log(socket1,socket2);
+  //console.log(socket1,socket2);
   return res.json({cancel:true});
 });
 

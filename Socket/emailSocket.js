@@ -9,8 +9,7 @@ import socketEmail from "../socketStore.js";
 const emailSocket = (io) => {
   io.on("connection", (socket) => {
     socket.on("register-Socket", ({ email }) => {
-      socketEmail.set(email, socket.id);
-      console.log(email, socket.id);
+      socketEmail.set(email, socket.id);;
     });
 
     socket.on("checkEmail", async (msg) => {

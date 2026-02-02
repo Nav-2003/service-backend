@@ -4,15 +4,12 @@ import crypto from "crypto";
 
 const router = express.Router();
 
-// Razorpay instance
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET,
 });
 
-/**
- * 1️⃣ CREATE ORDER
- */
+
 router.post("/create-order", async (req, res) => {
   try {
     const { amount, bookingId } = req.body;
@@ -30,9 +27,7 @@ router.post("/create-order", async (req, res) => {
   }
 });
 
-/**
- * 2️⃣ VERIFY PAYMENT
- */
+
 router.post("/verify", async (req, res) => {
   try {
     const {
@@ -41,16 +36,12 @@ router.post("/verify", async (req, res) => {
       razorpay_signature,
       bookingId,
     } = req.body;
-
     const body = razorpay_order_id + "|" + razorpay_payment_id;
-
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET)
       .update(body)
       .digest("hex");
-
     if (expectedSignature === razorpay_signature) {
-      // ✅ Payment verified (interview level)
       return res.json({
         success: true,
         message: "Payment verified",

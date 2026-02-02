@@ -22,22 +22,4 @@ router.put('/signUp',async(req,res)=>{
   })
 }); 
 
-// router.put("/signIn",verifyWorker,async(req,res)=>{
-//  const {email,pass}=req.body;
-//     const existingUser=await customerDataModel.findOne({email});
-//     if(!existingUser) return res.json({sign:false});
-//     const hashPass=existingUser.pass;
-//     if(bcrypt.compare(pass,hashPass)){
-//          const token=await jwt.sign(email,SECRET_CODE);
-//          res.cookie("workerToken",token,{
-//             httpOnly:true,
-//             secure:false,
-//             sameSite:"lax",
-//             maxAge:24*60*60*1000
-//          });
-//            return res.json({sign:true,user:true,worker:false});
-//     }
-//     return res.json({signIn:false});
-// });
-
 export default router;

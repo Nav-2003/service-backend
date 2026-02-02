@@ -14,7 +14,7 @@ router.post('/getServiceData',async(req,res)=>{
      for(let ele of services){
           const distance=getDistanceKm(lat,lng,ele.lat,ele.lng);
           if(distance<=1000){
-             console.log(distance);
+           //  console.log(distance);
              ele["distance"]=distance.toFixed(2);
              data.push(ele);
           }
@@ -24,7 +24,6 @@ router.post('/getServiceData',async(req,res)=>{
 
 router.post('/bookingInfrom',async(req,res)=>{
      const {email,type}=req.body;
-     console.log(type)
     const results = await bookingDataModel.find({
   [type]: true,
   $or: [
@@ -36,7 +35,6 @@ router.post('/bookingInfrom',async(req,res)=>{
 if (results.length === 0) {
   return res.status(404).json({ message: "No bookings found" });
 }
-console.log(results)
 return res.json(
   results.map(b => ({
     bookingId:b._id,
