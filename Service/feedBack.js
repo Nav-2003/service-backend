@@ -29,13 +29,10 @@ router.put("/storeFeedback", async (req, res) => {
 
 router.put('/getFeedback',async(req,res)=>{
     const {email}=req.body
-    const feedbackResult=await feedbackDataModel({email:email})
-    console.log(feedbackResult)
-    res.send({
-        name:feedbackResult.name,
-        rating:feedbackResult.rating,
-        text:feedbackResult.text,
-        time:feedbackResult.time
+    const feedbackResult=await feedbackDataModel.find({email:email});
+    return res.json({
+        success:true,
+        data:feedbackResult
     })
 });
 
